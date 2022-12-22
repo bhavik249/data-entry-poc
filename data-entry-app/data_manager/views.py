@@ -8,8 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib import messages
 from .forms import CreateEventForm
-from datetime import datetime
-from datetime import date
+
 
 class EventCreate(CreateView):
     model = Events
@@ -36,16 +35,14 @@ class BulkEventCreate(View):
                 Events(
                     country=row["country"],
                     title=row["title"],
-                    date=date(datetime.strptime("2018-04-02", "%Y-%m-%d").year,datetime.strptime("2018-04-02", "%Y-%m-%d").month, datetime.strptime("2018-04-02", "%Y-%m-%d").day),
+                    date=row["date"],
                     notes=row["notes"],
                     bunting=True if row["bunting"] and  row["bunting"] == "true" else False,
                 )
                 for row in list_of_dict
             ]
-
         except Exception as e:
             messages.error(request, f"Invalid formate of csv!")
-            messages.error(request, f"Error While Importing Data: {str(e)}")
             return redirect("/event")
         try:
             Events.objects.bulk_create(objs)

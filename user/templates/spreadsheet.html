@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
+    <script src="https://jsuites.net/v4/jsuites.js"></script>
+    <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+    <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+{% endblock %} 
+
+{% block content %}
+<br>
+<div class="container">
+<div id="spreadsheet1"></div>
+<ol class='example'>
+    <button type="button" class="btn btn-primary" onclick="table1.insertRow()">Insert a new blank row</button>
+    <button type="button" class="btn btn-primary" onclick="edit_event()">Save</button>
+</ol>  
+</div>
+
+{% endblock %}
+{% block extra_javascript %}
+<script>
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+    var data1 = []
+    {% for event in events %}
+        
+        var id = "{{event.id}}";
+        var country = "{{ event.country|title }}";
+        var title = "{{event.title|title}}";
+        var date = formatDate("{{ event.date }}");
+        var note = "{{event.notes}}";
+        var bunting = "{{ event.bunting|yesno:'true,false' }}";
+        
+        data1.push([id, title, country, date, note, bunting])
+    {% endfor %}
+     
+    var table1 = jspreadsheet(document.getElementById('spreadsheet1'), {
+        data:data1,
+        columns: [
+            {
+                title: 'ID',
+                type: 'hidden',
+                width:'100px',
+            },
+            {
+                title: 'Title',
+                type: 'text',
+                width:'300px',
+            },
+            {
+                title: 'Country',
+                type: 'text',
+                width:'200px',
+            },
+            {
+                title: 'Date',
+                type: 'calendar',
+                width:'200px',
+            },
+            {
+                title: 'Note',
+                type: 'text',
+                width:'200px',
+            },
+            {
+                title: 'Bunting',
+                type: 'checkbox',
+                width:'100px',
+            },
+        ],
+        rowResize: true,
+        columnDrag: true,
+    });
+
+    function edit_event() {
+        var requestData = JSON.stringify(table1.getData());
+        
+        // make POST ajax call
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'bulk-edit' %}",
+            data: requestData,
+            success: function (response) {
+                // on successfull creating object
+                document.location.reload(true);
+            }
+        })
+    }
+</script>
+</script>
+{% endblock %}
+
+
+ 

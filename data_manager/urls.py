@@ -7,5 +7,6 @@ urlpatterns = [
     path('<int:pk>/update/', EventUpdate.as_view(), name='event-update'),
     path('<int:pk>/delete/', EventDelete.as_view(), name='event-delete'),
     path('importevent/', BulkEventCreate.as_view(), name='bulk-event-create'),
-    path('calendarview/', CalendarView.as_view(), name="calendar-view")
+    path('calendarview/', CalendarView.as_view(), name="calendar-view"),
+    path('bulkedit/', EditEvents, name="bulk-edit")
 ]

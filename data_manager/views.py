@@ -11,18 +11,24 @@ from .forms import CreateEventForm
 from datetime import datetime
 from datetime import date
 
-class EventCreate(CreateView):
+class EventCreate(LoginRequiredMixin, CreateView):
     model = Events
     fields = "__all__"
     success_url ="/event"
 
+    def post(self, request, *args, **kwargs):
+        request.POST._mutable = True
+        country = request.POST["country"]
+        request.POST.update({"country": country.replace("-", " ")})
+        return super().post(request, *args, **kwargs)
 
-class EventUpdate(UpdateView):
+
+class EventUpdate(LoginRequiredMixin, UpdateView):
     model = Events
     fields = "__all__"
     success_url ="/event"
 
-class EventDelete(DeleteView):
+class EventDelete(LoginRequiredMixin, DeleteView):
     model = Events
     success_url ="/event"
 
@@ -34,7 +40,7 @@ class BulkEventCreate(View):
         try:
             objs = [
                 Events(
-                    country=row["country"],
+                    country=row["country"].replace("-", " "),
                     title=row["title"],
                     date=date(datetime.strptime("2018-04-02", "%Y-%m-%d").year,datetime.strptime("2018-04-02", "%Y-%m-%d").month, datetime.strptime("2018-04-02", "%Y-%m-%d").day),
                     notes=row["notes"],
@@ -54,10 +60,21 @@ class BulkEventCreate(View):
             messages.error(request, f"Error While Importing Data: {str(e)}")
         return redirect("/event")
 
-class InventoryListView(LoginRequiredMixin, ListView):
+class InventoryListView(ListView):
     model = Events
     fields = "__all__"
     template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event_form"] = CreateEventForm
+        return context
+
+
+class CalendarView(ListView):
+    model = Events
+    fields = "__all__"
+    template_name = "calendar.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+<div class="container">
+    <div id="calendar"></div>
+</div>
+
+{% block extra_javascript %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              themeSystem: 'bootstrap5',
+              headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+              },
+              navLinks: true, // can click day/week names to navigate views
+              selectable: true,
+              weekNumbers: true,
+              dayMaxEvents: true, // allow "more" link when too many events
+              events: [
+                {% for event in object_list %}
+                    {
+                        title: "{{ event.title }}",
+                        start: "{{ event.date|date:'Y-m-d' }}",
+                        location: '{{ event.country }}',
+                    },
+                {% endfor %}
+              ]
+            });
+            calendar.render();
+          });
+    </script>
+    {% endblock %}
+{% endblock %}

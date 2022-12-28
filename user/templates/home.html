@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}      
-{% if user.is_authenticated %}
 <div class="container">
+    <h3>Hello, {{ user.username|default:'Guest' }}!</h3>
+    <p>Welcome to Holidays App</p>
     <br>
-    <h2>Event Cards</h2>
+    <h2>Holidays</h2>
     <br>
     <div class="card-columns">
         {% for object in  object_list %}
@@ -15,9 +16,9 @@
                         <img src="{% static 'img/bunting.png' %}" alt="Bunting image" width="20" height="20"  data-toggle="tooltip" data-placement="top" title="Bunting available for this event.">
                         {% endif %}
                     </h6>
-                    <p class="card-text text-left">Country: {{ object.country }}
-                        <br>Date: {{ object.date }}
-                        <br>Note: {{ object.notes }}
+                    <p class="card-text text-left">{{ object.country|title }}
+                        <br>{{ object.date }}
+                        <br>{{ object.notes }}
                     </p>                    
                 </div>
             </div>
@@ -34,9 +35,6 @@
 
 {% endblock %}
 
-{% else %}
-    <h3>Hello, {{ user.username|default:'Guest' }}!</h3>
-    <p>Welcome to Data Entry App</p>
-{% endif %}
+
 
 {% endblock %}

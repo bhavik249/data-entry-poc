@@ -29,4 +29,10 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
+6. Run server
+
+```
+python manage.py runserver
+```
+
 You can go to the http:///127.0.0.1:8000 to view the application running.

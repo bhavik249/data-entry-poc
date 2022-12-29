@@ -93,8 +93,7 @@
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="form-group">
-                    <a href="{%static 'sample/test_data.csv'%}" download >Test Data</a><br>
-                    <label for="recipient-name" class="col-form-label">Recipient:</label>
+                    <a href="{%static 'sample/test_data.csv'%}" download >Download Bulk Upload Template</a><br>
                     <input type="file" accept=".csv" name="bulkcreatfile" class="form-control" id="recipient-name">
                     </div>
                 </div>
@@ -120,6 +119,4 @@
     {% endblock %}
     {% endblock javascript %}
 </body>  
-
-
 </html>

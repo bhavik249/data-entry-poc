@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 from data_manager.models import Events
@@ -85,22 +86,31 @@ def EditEvents(request):
     if request.method == "POST":
         event_bulk_update_list = []
         event_bulk_create_list = []
-
+        print(request.body.decode('utf-8'))
         for event_data in json.loads(request.body.decode('utf-8')):
-            if event_data[0]:
-                event_obj = Events.objects.get(id=event_data[0])
-                event_obj.title = event_data[1]
-                event_obj.country = event_data[2]
-                event_obj.date = event_data[3]
-                event_obj.notes = event_data[4]
-                event_obj.bunting = event_data[5]
+            if event_data[1] and event_data[2] and event_data[3]:
+                parsed_date = datetime.strptime(event_data[3], "%Y-%m-%d %H:%M:%S")
+                event_date = date(parsed_date.year, parsed_date.month, parsed_date.day)
+                if event_data[0]:
 
-                event_bulk_update_list.append(event_obj)
-            else:
-                event_bulk_create_list.append(Events(title = event_data[1], country = event_data[2],
-                                        date = date(datetime.strptime(event_data[3], "%Y-%m-%d %H:%M:%S").year,datetime.strptime(event_data[3], "%Y-%m-%d %H:%M:%S").month, datetime.strptime(event_data[3], "%Y-%m-%d %H:%M:%S").day),
-                                        notes = event_data[4], bunting = event_data[5]))
+                    event_obj = Events.objects.get(id=event_data[0])
+                    event_obj.title = event_data[1]
+                    event_obj.country = event_data[2]
+                    event_obj.date = event_date
+                    event_obj.notes = event_data[4]
+                    event_obj.bunting = event_data[5]
+
+                    event_bulk_update_list.append(event_obj)
+                else:
+                    event_bulk_create_list.append(
+                            Events(
+                                title = event_data[1], 
+                                country = event_data[2],
+                                date = event_date,
+                                notes = event_data[4], 
+                                bunting = event_data[5]))
                 
         Events.objects.bulk_create(event_bulk_create_list)
         Events.objects.bulk_update(event_bulk_update_list, ['title','country', 'date', 'notes', 'bunting'])   
+        return redirect(reverse('home'))
     return render(request, 'spreadsheet.html', {'events': Events.objects.all()})

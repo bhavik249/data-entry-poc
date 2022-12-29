@@ -11,14 +11,13 @@
         {% for object in  object_list %}
             <div class="card bg-light">
                 <div class="card-body text-center">
-                    <h6 class="card-text text-center">{{ object.title }}
+                    <h3 class="card-text text-center">{{ object.title }}
                         {% if object.bunting %}
                         <img src="{% static 'img/bunting.png' %}" alt="Bunting image" width="20" height="20"  data-toggle="tooltip" data-placement="top" title="Bunting available for this event.">
                         {% endif %}
-                    </h6>
+                    </h3>
                     <p class="card-text text-left">{{ object.country|title }}
                         <br>{{ object.date }}
-                        <br>{{ object.notes }}
                     </p>                    
                 </div>
             </div>

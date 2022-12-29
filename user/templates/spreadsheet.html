@@ -12,11 +12,10 @@
 {% block content %}
 <br>
 <div class="container">
+<a href="javascript:void()" onclick="table1.insertRow()">+ Insert Row</a>
 <div id="spreadsheet1"></div>
-<ol class='example'>
-    <button type="button" class="btn btn-primary" onclick="table1.insertRow()">Insert a new blank row</button>
-    <button type="button" class="btn btn-primary" onclick="edit_event()">Save</button>
-</ol>  
+<br/>
+<button type="button" class="btn btn-primary" onclick="edit_event()">Save</button>
 </div>
 
 {% endblock %}
@@ -33,7 +32,7 @@
         if (day.length < 2) 
             day = '0' + day;
 
-        return [year, month, day].join('-');
+        return [year, month, day].join('-') + " 00:00:00";
     }
     var data1 = []
     {% for event in events %}
@@ -84,6 +83,7 @@
         ],
         rowResize: true,
         columnDrag: true,
+        minDimensions: [5, 5],
     });
 
     function edit_event() {
@@ -96,7 +96,7 @@
             data: requestData,
             success: function (response) {
                 // on successfull creating object
-                document.location.reload(true);
+                document.location = "/"
             }
         })
     }
